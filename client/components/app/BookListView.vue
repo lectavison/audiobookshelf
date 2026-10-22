@@ -73,7 +73,7 @@ export default {
     },
     coverSize() {
       const size = this.settings.listCoverSize || 40
-      if (this.windowWidth < 640) return Math.max(24, Math.min(size, Math.round(this.windowWidth * 0.15)))
+      if (this.windowWidth < 640) return Math.max(30, Math.min(size, Math.round(this.windowWidth * 0.15)))
       return size
     },
     settings() {
@@ -104,7 +104,7 @@ export default {
       this.windowWidth = window.innerWidth
     },
     changeCoverSize(delta) {
-      const size = Math.min(200, Math.max(24, this.coverSize + delta))
+      const size = Math.min(200, Math.max(30, this.coverSize + delta))
       this.$store.dispatch('user/updateUserSettings', { listCoverSize: size })
     },
     coverSrc(item) {
