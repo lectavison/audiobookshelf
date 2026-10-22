@@ -605,6 +605,8 @@
   "LabelSettingsHomePageBookshelfView": "Home page use bookshelf view",
   "LabelSettingsLibraryBookshelfView": "Library use bookshelf view",
   "LabelSettingsLibraryListView": "Library use list view",
+  "LabelSwitchToGridView": "Switch to grid view",
+  "LabelSwitchToListView": "Switch to list view",
   "LabelSettingsLibraryMarkAsFinishedPercentComplete": "Percent complete is greater than",
   "LabelSettingsLibraryMarkAsFinishedTimeRemaining": "Time remaining is less than (seconds)",
   "LabelSettingsLibraryMarkAsFinishedWhen": "Mark media item as finished when",

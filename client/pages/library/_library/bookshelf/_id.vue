@@ -42,7 +42,9 @@ export default {
   },
   computed: {
     useListView() {
-      return !this.id && !!this.$store.state.serverSettings?.libraryListView
+      const userPref = this.$store.state.user.settings.libraryListView
+      const enabled = userPref != null ? !!userPref : !!this.$store.state.serverSettings?.libraryListView
+      return !this.id && enabled
     },
     streamLibraryItem() {
       return this.$store.state.streamLibraryItem

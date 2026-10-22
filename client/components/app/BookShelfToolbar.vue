@@ -65,6 +65,13 @@
         <!-- library sort select -->
         <controls-library-sort-select v-if="isLibraryPage && !isBatchSelecting" v-model="settings.orderBy" :descending.sync="settings.orderDesc" class="w-36 sm:w-44 md:w-48 h-7.5 ml-1 sm:ml-4" @change="updateOrder" />
 
+        <!-- grid/list view toggle -->
+        <ui-tooltip v-if="isLibraryPage && isBookLibrary && !isBatchSelecting" :text="listViewActive ? $strings.LabelSwitchToGridView : $strings.LabelSwitchToListView" direction="bottom" class="ml-1 sm:ml-2">
+          <button class="h-7.5 w-7.5 flex items-center justify-center rounded-sm bg-primary border border-gray-600 hover:bg-bg" :aria-label="listViewActive ? $strings.LabelSwitchToGridView : $strings.LabelSwitchToListView" @click="toggleListView">
+            <span class="material-symbols text-xl">{{ listViewActive ? 'grid_view' : 'view_list' }}</span>
+          </button>
+        </ui-tooltip>
+
         <!-- series filter select -->
         <controls-library-filter-select v-if="isSeriesPage && !isBatchSelecting" v-model="settings.seriesFilterBy" is-series class="w-36 sm:w-44 md:w-48 h-7.5 ml-1 sm:ml-4" @change="updateSeriesFilter" />
 
@@ -235,6 +242,10 @@ export default {
     },
     isPodcastLibrary() {
       return this.currentLibraryMediaType === 'podcast'
+    },
+    listViewActive() {
+      const userPref = this.settings.libraryListView
+      return userPref != null ? !!userPref : !!this.$store.state.serverSettings?.libraryListView
     },
     isLibraryPage() {
       return this.page === ''
@@ -565,6 +576,9 @@ export default {
         type: 'yesNo'
       }
       this.$store.commit('globals/setConfirmPrompt', payload)
+    },
+    toggleListView() {
+      this.$store.dispatch('user/updateUserSettings', { libraryListView: !this.listViewActive })
     },
     updateOrder() {
       this.saveSettings()
