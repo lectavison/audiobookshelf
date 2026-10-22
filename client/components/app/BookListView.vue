@@ -22,7 +22,7 @@
             <img :src="coverSrc(item)" loading="lazy" class="object-cover rounded-xs bg-primary max-w-none block" :style="{ width: coverSize + 'px', height: coverSize + 'px' }" />
           </td>
           <td class="py-1 px-2 max-w-0">
-            <p class="break-words" :style="clamp(titleLines(item))">{{ item.media.metadata.title }}</p>
+            <p class="break-words" :style="clamp(titleLines(item))"><span v-if="item.media.metadata.explicit" class="text-[10px] font-bold leading-none border border-gray-400 text-gray-300 rounded-xs px-1 py-px mr-1 align-middle" title="Explicit">E</span><span v-if="item.media.metadata.abridged" class="text-[10px] font-bold leading-none border border-gray-400 text-gray-300 rounded-xs px-1 py-px mr-1 align-middle" title="Abridged">ABR</span>{{ item.media.metadata.title }}</p>
             <p v-if="hasSubtitle(item)" class="text-xs text-gray-400 break-words" :style="clamp(1)">{{ item.media.metadata.subtitle }}</p>
             <div class="sm:hidden"><p class="text-xs text-gray-400 break-words" :style="clamp(1)">{{ item.media.metadata.authorName }}</p></div>
           </td>
