@@ -22,11 +22,12 @@
             <img :src="coverSrc(item)" loading="lazy" class="object-cover rounded-xs bg-primary max-w-none block" :style="{ width: coverSize + 'px', height: coverSize + 'px' }" />
           </td>
           <td class="py-1 px-2 max-w-0">
-            <p class="truncate">{{ title(item) }}</p>
-            <p class="sm:hidden text-xs text-gray-400 truncate">{{ item.media.metadata.authorName }}</p>
+            <p class="break-words">{{ item.media.metadata.title }}</p>
+            <p v-if="item.media.metadata.subtitle" class="text-xs text-gray-400 break-words">{{ item.media.metadata.subtitle }}</p>
+            <p class="sm:hidden text-xs text-gray-400 break-words">{{ item.media.metadata.authorName }}</p>
           </td>
-          <td class="py-1 px-2 hidden sm:table-cell truncate max-w-0">{{ item.media.metadata.authorName }}</td>
-          <td class="py-1 px-2 hidden md:table-cell truncate max-w-0">{{ item.media.metadata.seriesName === 'no series' ? '' : item.media.metadata.seriesName }}</td>
+          <td class="py-1 px-2 hidden sm:table-cell break-words max-w-0">{{ item.media.metadata.authorName }}</td>
+          <td class="py-1 px-2 hidden md:table-cell break-words max-w-0">{{ item.media.metadata.seriesName === 'no series' ? '' : item.media.metadata.seriesName }}</td>
           <td class="py-1 px-2 hidden md:table-cell whitespace-nowrap text-gray-400" :title="item.path">{{ parentFolder(item) }}</td>
           <td class="py-1 px-2 hidden lg:table-cell text-left whitespace-nowrap">{{ item.media.metadata.publishedYear }}</td>
           <td class="py-1 px-2 hidden lg:table-cell text-left whitespace-nowrap">{{ item.media.duration ? $elapsedPretty(item.media.duration) : '' }}</td>
@@ -77,10 +78,6 @@ export default {
     }
   },
   methods: {
-    title(item) {
-      const metadata = item.media.metadata
-      return this.settings.showSubtitles && metadata.subtitle ? `${metadata.title} - ${metadata.subtitle}` : metadata.title
-    },
     parentFolder(item) {
       const folder = (this.$store.getters['libraries/getCurrentLibrary']?.folders || []).find((f) => f.id === item.folderId)
       const root = (folder?.fullPath || '').split(/[\\/]/).filter(Boolean).pop()
