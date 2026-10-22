@@ -68,7 +68,7 @@ export default {
     parentFolder(item) {
       const parts = (item.relPath || '').split(/[\\/]/).filter(Boolean)
       parts.pop()
-      return parts.join('/')
+      return parts.slice(0, 2).join('/')
     },
     coverSrc(item) {
       return this.$store.getters['globals/getLibraryItemCoverSrc'](item)
