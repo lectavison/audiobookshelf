@@ -26,7 +26,7 @@
             <p v-if="hasSubtitle(item)" class="text-xs text-gray-400 break-words" :style="clamp(1)">{{ item.media.metadata.subtitle }}</p>
             <p class="sm:hidden text-xs text-gray-400 break-words" :style="clamp(1)">{{ item.media.metadata.authorName }}</p>
           </td>
-          <td class="py-1 px-2 hidden sm:table-cell max-w-0"><div class="break-words" :style="clamp(textLines)">{{ item.media.metadata.authorName }}</div></td>
+          <td class="py-1 px-2 hidden sm:table-cell break-words max-w-0">{{ item.media.metadata.authorName }}</td>
           <td class="py-1 px-2 hidden md:table-cell max-w-0"><div class="break-words" :style="clamp(textLines)">{{ item.media.metadata.seriesName === 'no series' ? '' : item.media.metadata.seriesName }}</div></td>
           <td class="py-1 px-2 hidden md:table-cell whitespace-nowrap text-gray-400" :title="item.path">{{ parentFolder(item) }}</td>
           <td class="py-1 px-2 hidden lg:table-cell text-left whitespace-nowrap">{{ item.media.metadata.publishedYear }}</td>
