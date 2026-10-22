@@ -1,7 +1,8 @@
 <template>
   <div class="page" :class="streamLibraryItem ? 'streaming' : ''">
     <app-book-shelf-toolbar :page="id || ''" />
-    <app-lazy-bookshelf :page="id || ''" />
+    <app-book-list-view v-if="useListView" />
+    <app-lazy-bookshelf v-else :page="id || ''" />
   </div>
 </template>
 
@@ -40,6 +41,9 @@ export default {
     return {}
   },
   computed: {
+    useListView() {
+      return !this.id && !!this.$store.state.serverSettings?.libraryListView
+    },
     streamLibraryItem() {
       return this.$store.state.streamLibraryItem
     }
