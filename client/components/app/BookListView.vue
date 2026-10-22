@@ -3,7 +3,7 @@
     <table class="w-full text-sm">
       <thead class="sticky top-0 z-10 bg-bg text-left text-gray-300">
         <tr>
-          <th class="py-2" :style="{ width: coverSize + 8 + 'px' }"></th>
+          <th class="py-2" :style="{ width: coverSize + 8 + 'px', minWidth: coverSize + 8 + 'px' }"></th>
           <th class="py-2 px-2 w-[40%]">{{ $strings.LabelTitle }}</th>
           <th class="py-2 px-2 hidden sm:table-cell w-[25%]">{{ $strings.LabelAuthor }}</th>
           <th class="py-2 px-2 hidden md:table-cell w-[25%]">{{ $strings.LabelSeries }}</th>
@@ -18,8 +18,8 @@
       </thead>
       <tbody>
         <tr v-for="item in items" :key="item.id" class="border-t border-white/10 hover:bg-white/5 cursor-pointer" @click="open(item)">
-          <td class="py-1">
-            <img :src="coverSrc(item)" loading="lazy" class="object-cover rounded-xs bg-primary" :style="{ width: coverSize + 'px', height: coverSize + 'px' }" />
+          <td class="py-1" :style="{ minWidth: coverSize + 8 + 'px' }">
+            <img :src="coverSrc(item)" loading="lazy" class="object-cover rounded-xs bg-primary max-w-none block" :style="{ width: coverSize + 'px', height: coverSize + 'px' }" />
           </td>
           <td class="py-1 px-2 max-w-0">
             <p class="truncate">{{ title(item) }}</p>
