@@ -21,7 +21,6 @@ const PATCHABLE_SETTINGS_KEYS = new Set([
   'logLevel',
   'homeBookshelfView',
   'bookshelfView',
-  'libraryListView',
   'dateFormat',
   'timeFormat',
   'language',
@@ -66,7 +65,6 @@ class ServerSettings {
     // Bookshelf Display
     this.homeBookshelfView = BookshelfView.DETAIL
     this.bookshelfView = BookshelfView.DETAIL
-    this.libraryListView = false
 
     // Podcasts
     this.podcastEpisodeSchedule = '0 * * * *' // Every hour
@@ -141,7 +139,6 @@ class ServerSettings {
 
     this.homeBookshelfView = settings.homeBookshelfView || BookshelfView.STANDARD
     this.bookshelfView = settings.bookshelfView || BookshelfView.STANDARD
-    this.libraryListView = !!settings.libraryListView
 
     this.sortingIgnorePrefix = !!settings.sortingIgnorePrefix
     this.sortingPrefixes = settings.sortingPrefixes || ['the']
@@ -254,7 +251,6 @@ class ServerSettings {
       loggerScannerLogsToKeep: this.loggerScannerLogsToKeep,
       homeBookshelfView: this.homeBookshelfView,
       bookshelfView: this.bookshelfView,
-      libraryListView: this.libraryListView,
       podcastEpisodeSchedule: this.podcastEpisodeSchedule,
       sortingIgnorePrefix: this.sortingIgnorePrefix,
       sortingPrefixes: [...this.sortingPrefixes],

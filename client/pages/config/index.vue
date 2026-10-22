@@ -130,11 +130,6 @@
             </ui-tooltip>
           </div>
 
-          <div class="flex items-center py-2">
-            <ui-toggle-switch labeledBy="settings-library-uses-list" v-model="useLibraryListView" :disabled="updatingServerSettings" @input="updateUseLibraryListView" />
-            <p class="pl-4" id="settings-library-uses-list">{{ $strings.LabelSettingsLibraryListView }}</p>
-          </div>
-
           <div class="grow py-2">
             <ui-dropdown :label="$strings.LabelSettingsDateFormat" v-model="newServerSettings.dateFormat" :items="dateFormats" small class="max-w-72" @input="(val) => updateSettingsKey('dateFormat', val)" />
             <p class="text-xs ml-1 text-white/60">{{ $strings.LabelExample }}: {{ dateExample }}</p>
@@ -232,7 +227,6 @@ export default {
       updatingServerSettings: false,
       homepageUseBookshelfView: false,
       useBookshelfView: false,
-      useLibraryListView: false,
       scannerEnableWatcher: false,
       isPurgingCache: false,
       hasPrefixesChanged: false,
@@ -318,9 +312,6 @@ export default {
         bookshelfView: !val ? this.$constants.BookshelfView.DETAIL : this.$constants.BookshelfView.STANDARD
       })
     },
-    updateUseLibraryListView(val) {
-      this.updateServerSettings({ libraryListView: !!val })
-    },
     updateServerLanguage(val) {
       this.updateSettingsKey('language', val)
     },
@@ -379,7 +370,6 @@ export default {
 
       this.homepageUseBookshelfView = this.newServerSettings.homeBookshelfView != this.$constants.BookshelfView.DETAIL
       this.useBookshelfView = this.newServerSettings.bookshelfView != this.$constants.BookshelfView.DETAIL
-      this.useLibraryListView = !!this.newServerSettings.libraryListView
     },
     purgeCache() {
       this.showConfirmPurgeCache = true

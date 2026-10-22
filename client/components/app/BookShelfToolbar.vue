@@ -244,8 +244,7 @@ export default {
       return this.currentLibraryMediaType === 'podcast'
     },
     listViewActive() {
-      const userPref = this.settings.libraryListView
-      return userPref != null ? !!userPref : !!this.$store.state.serverSettings?.libraryListView
+      return !!this.settings.libraryListView
     },
     isLibraryPage() {
       return this.page === ''

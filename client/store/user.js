@@ -9,7 +9,7 @@ export const state = () => ({
     playbackRateIncrementDecrement: 0.1,
     bookshelfCoverSize: 120,
     collapseSeries: false,
-    libraryListView: null,
+    libraryListView: false,
     collapseBookSeries: false,
     showSubtitles: false,
     useChapterTrack: false,
