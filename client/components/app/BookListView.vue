@@ -22,12 +22,12 @@
             <img :src="coverSrc(item)" loading="lazy" class="object-cover rounded-xs bg-primary max-w-none block" :style="{ width: coverSize + 'px', height: coverSize + 'px' }" />
           </td>
           <td class="py-1 px-2 max-w-0">
-            <p class="break-words">{{ item.media.metadata.title }}</p>
-            <p v-if="settings.showSubtitles && item.media.metadata.subtitle" class="text-xs text-gray-400 break-words">{{ item.media.metadata.subtitle }}</p>
-            <p class="sm:hidden text-xs text-gray-400 break-words">{{ item.media.metadata.authorName }}</p>
+            <p class="break-words" :style="clamp(titleLines(item))">{{ item.media.metadata.title }}</p>
+            <p v-if="hasSubtitle(item)" class="text-xs text-gray-400 break-words" :style="clamp(1)">{{ item.media.metadata.subtitle }}</p>
+            <p class="sm:hidden text-xs text-gray-400 break-words" :style="clamp(1)">{{ item.media.metadata.authorName }}</p>
           </td>
-          <td class="py-1 px-2 hidden sm:table-cell break-words max-w-0">{{ item.media.metadata.authorName }}</td>
-          <td class="py-1 px-2 hidden md:table-cell break-words max-w-0">{{ item.media.metadata.seriesName === 'no series' ? '' : item.media.metadata.seriesName }}</td>
+          <td class="py-1 px-2 hidden sm:table-cell max-w-0"><div class="break-words" :style="clamp(textLines)">{{ item.media.metadata.authorName }}</div></td>
+          <td class="py-1 px-2 hidden md:table-cell max-w-0"><div class="break-words" :style="clamp(textLines)">{{ item.media.metadata.seriesName === 'no series' ? '' : item.media.metadata.seriesName }}</div></td>
           <td class="py-1 px-2 hidden md:table-cell whitespace-nowrap text-gray-400" :title="item.path">{{ parentFolder(item) }}</td>
           <td class="py-1 px-2 hidden lg:table-cell text-left whitespace-nowrap">{{ item.media.metadata.publishedYear }}</td>
           <td class="py-1 px-2 hidden lg:table-cell text-left whitespace-nowrap">{{ item.media.duration ? $elapsedPretty(item.media.duration) : '' }}</td>
@@ -67,6 +67,9 @@ export default {
     libraryId() {
       return this.$store.state.libraries.currentLibraryId
     },
+    textLines() {
+      return Math.max(1, Math.floor(this.coverSize / 20))
+    },
     coverSize() {
       return this.settings.listCoverSize || 40
     },
@@ -83,6 +86,16 @@ export default {
       const root = (folder?.fullPath || '').split(/[\\/]/).filter(Boolean).pop()
       if (root) return root
       return (item.path || '').split(/[\\/]/).filter(Boolean).slice(0, 2).join('/')
+    },
+    hasSubtitle(item) {
+      return !!(this.settings.showSubtitles && item.media.metadata.subtitle)
+    },
+    titleLines(item) {
+      const available = this.hasSubtitle(item) ? this.coverSize - 16 : this.coverSize
+      return Math.max(1, Math.floor(available / 20))
+    },
+    clamp(lines) {
+      return { display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: lines, overflow: 'hidden' }
     },
     changeCoverSize(delta) {
       const size = Math.min(200, Math.max(24, this.coverSize + delta))
