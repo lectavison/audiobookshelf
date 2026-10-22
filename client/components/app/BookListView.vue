@@ -66,8 +66,7 @@ export default {
       return this.settings.showSubtitles && metadata.subtitle ? `${metadata.title} - ${metadata.subtitle}` : metadata.title
     },
     parentFolder(item) {
-      const parts = (item.relPath || '').split(/[\\/]/).filter(Boolean)
-      parts.pop()
+      const parts = (item.path || '').split(/[\\/]/).filter(Boolean)
       return parts.slice(0, 2).join('/')
     },
     coverSrc(item) {
