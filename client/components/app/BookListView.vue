@@ -7,6 +7,7 @@
           <th class="py-2 px-2">{{ $strings.LabelTitle }}</th>
           <th class="py-2 px-2 hidden sm:table-cell">{{ $strings.LabelAuthor }}</th>
           <th class="py-2 px-2 hidden md:table-cell">{{ $strings.LabelSeries }}</th>
+          <th class="py-2 px-2 hidden md:table-cell">{{ $strings.LabelFolder }}</th>
           <th class="py-2 px-2 hidden lg:table-cell text-right">{{ $strings.LabelDuration }}</th>
           <th class="py-2 px-2 hidden lg:table-cell text-right">{{ $strings.LabelAddedAt }}</th>
         </tr>
@@ -22,6 +23,7 @@
           </td>
           <td class="py-1 px-2 hidden sm:table-cell truncate max-w-xs">{{ item.media.metadata.authorName }}</td>
           <td class="py-1 px-2 hidden md:table-cell truncate max-w-xs">{{ item.media.metadata.seriesName }}</td>
+          <td class="py-1 px-2 hidden md:table-cell truncate max-w-xs text-gray-400" :title="item.path">{{ parentFolder(item) }}</td>
           <td class="py-1 px-2 hidden lg:table-cell text-right whitespace-nowrap">{{ item.media.duration ? $elapsedPretty(item.media.duration) : '' }}</td>
           <td class="py-1 px-2 hidden lg:table-cell text-right whitespace-nowrap">{{ item.addedAt ? $formatDate(item.addedAt, 'yyyy-MM-dd') : '' }}</td>
         </tr>
@@ -62,6 +64,11 @@ export default {
     title(item) {
       const metadata = item.media.metadata
       return this.settings.showSubtitles && metadata.subtitle ? `${metadata.title} - ${metadata.subtitle}` : metadata.title
+    },
+    parentFolder(item) {
+      const parts = (item.relPath || '').split(/[\\/]/).filter(Boolean)
+      parts.pop()
+      return parts.join('/')
     },
     coverSrc(item) {
       return this.$store.getters['globals/getLibraryItemCoverSrc'](item)
