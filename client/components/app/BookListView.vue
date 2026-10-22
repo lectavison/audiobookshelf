@@ -1,19 +1,19 @@
 <template>
   <div id="bookshelf" ref="scroller" class="w-full overflow-y-auto px-2 pb-8" @scroll="onScroll">
-    <table class="w-auto text-sm">
+    <table class="w-full text-sm">
       <thead class="sticky top-0 z-10 bg-bg text-left text-gray-300">
         <tr>
           <th class="py-2" :style="{ width: coverSize + 8 + 'px' }"></th>
-          <th class="py-2 px-2">{{ $strings.LabelTitle }}</th>
-          <th class="py-2 px-2 hidden sm:table-cell">{{ $strings.LabelAuthor }}</th>
-          <th class="py-2 px-2 hidden md:table-cell">{{ $strings.LabelSeries }}</th>
-          <th class="py-2 px-2 hidden md:table-cell">{{ $strings.LabelFolder }}</th>
-          <th class="py-2 px-2 hidden lg:table-cell text-left">{{ $strings.LabelPublishYear }}</th>
-          <th class="py-2 px-2 hidden lg:table-cell text-left">{{ $strings.LabelDuration }}</th>
-          <th class="py-2 px-2 hidden lg:table-cell text-left">{{ $strings.LabelSize }}</th>
-          <th class="py-2 px-2 hidden lg:table-cell text-left">{{ $strings.LabelAddedAt }}</th>
-          <th class="py-2 px-2 hidden xl:table-cell text-left">{{ $strings.LabelFileBirthtime }}</th>
-          <th class="py-2 px-2 hidden xl:table-cell text-left">{{ $strings.LabelFileModified }}</th>
+          <th class="py-2 px-2 w-[40%]">{{ $strings.LabelTitle }}</th>
+          <th class="py-2 px-2 hidden sm:table-cell w-[25%]">{{ $strings.LabelAuthor }}</th>
+          <th class="py-2 px-2 hidden md:table-cell w-[25%]">{{ $strings.LabelSeries }}</th>
+          <th class="py-2 px-2 hidden md:table-cell w-px whitespace-nowrap">{{ $strings.LabelFolder }}</th>
+          <th class="py-2 px-2 hidden lg:table-cell text-left w-px whitespace-nowrap">{{ $strings.LabelPublishYear }}</th>
+          <th class="py-2 px-2 hidden lg:table-cell text-left w-px whitespace-nowrap">{{ $strings.LabelDuration }}</th>
+          <th class="py-2 px-2 hidden lg:table-cell text-left w-px whitespace-nowrap">{{ $strings.LabelSize }}</th>
+          <th class="py-2 px-2 hidden lg:table-cell text-left w-px whitespace-nowrap">{{ $strings.LabelAddedAt }}</th>
+          <th class="py-2 px-2 hidden xl:table-cell text-left w-px whitespace-nowrap">{{ $strings.LabelFileBirthtime }}</th>
+          <th class="py-2 px-2 hidden xl:table-cell text-left w-px whitespace-nowrap">{{ $strings.LabelFileModified }}</th>
         </tr>
       </thead>
       <tbody>
@@ -21,13 +21,13 @@
           <td class="py-1">
             <img :src="coverSrc(item)" loading="lazy" class="object-cover rounded-xs bg-primary" :style="{ width: coverSize + 'px', height: coverSize + 'px' }" />
           </td>
-          <td class="py-1 px-2">
-            <p class="truncate max-w-[40vw] md:max-w-xl">{{ title(item) }}</p>
+          <td class="py-1 px-2 max-w-0">
+            <p class="truncate">{{ title(item) }}</p>
             <p class="sm:hidden text-xs text-gray-400 truncate">{{ item.media.metadata.authorName }}</p>
           </td>
-          <td class="py-1 px-2 hidden sm:table-cell truncate max-w-xs">{{ item.media.metadata.authorName }}</td>
-          <td class="py-1 px-2 hidden md:table-cell truncate max-w-xs">{{ item.media.metadata.seriesName === 'no series' ? '' : item.media.metadata.seriesName }}</td>
-          <td class="py-1 px-2 hidden md:table-cell truncate max-w-xs text-gray-400" :title="item.path">{{ parentFolder(item) }}</td>
+          <td class="py-1 px-2 hidden sm:table-cell truncate max-w-0">{{ item.media.metadata.authorName }}</td>
+          <td class="py-1 px-2 hidden md:table-cell truncate max-w-0">{{ item.media.metadata.seriesName === 'no series' ? '' : item.media.metadata.seriesName }}</td>
+          <td class="py-1 px-2 hidden md:table-cell whitespace-nowrap text-gray-400" :title="item.path">{{ parentFolder(item) }}</td>
           <td class="py-1 px-2 hidden lg:table-cell text-left whitespace-nowrap">{{ item.media.metadata.publishedYear }}</td>
           <td class="py-1 px-2 hidden lg:table-cell text-left whitespace-nowrap">{{ item.media.duration ? $elapsedPretty(item.media.duration) : '' }}</td>
           <td class="py-1 px-2 hidden lg:table-cell text-left whitespace-nowrap">{{ item.size ? $bytesPretty(item.size) : '' }}</td>
