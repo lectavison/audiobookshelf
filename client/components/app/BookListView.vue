@@ -66,8 +66,10 @@ export default {
       return this.settings.showSubtitles && metadata.subtitle ? `${metadata.title} - ${metadata.subtitle}` : metadata.title
     },
     parentFolder(item) {
-      const parts = (item.path || '').split(/[\\/]/).filter(Boolean)
-      return parts.slice(0, 2).join('/')
+      const folder = (this.$store.getters['libraries/getCurrentLibrary']?.folders || []).find((f) => f.id === item.folderId)
+      const root = (folder?.fullPath || '').split(/[\\/]/).filter(Boolean).pop()
+      if (root) return root
+      return (item.path || '').split(/[\\/]/).filter(Boolean).slice(0, 2).join('/')
     },
     coverSrc(item) {
       return this.$store.getters['globals/getLibraryItemCoverSrc'](item)
