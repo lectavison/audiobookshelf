@@ -23,7 +23,7 @@
           </td>
           <td class="py-1 px-2 max-w-0">
             <p class="break-words">{{ item.media.metadata.title }}</p>
-            <p v-if="item.media.metadata.subtitle" class="text-xs text-gray-400 break-words">{{ item.media.metadata.subtitle }}</p>
+            <p v-if="settings.showSubtitles && item.media.metadata.subtitle" class="text-xs text-gray-400 break-words">{{ item.media.metadata.subtitle }}</p>
             <p class="sm:hidden text-xs text-gray-400 break-words">{{ item.media.metadata.authorName }}</p>
           </td>
           <td class="py-1 px-2 hidden sm:table-cell break-words max-w-0">{{ item.media.metadata.authorName }}</td>
