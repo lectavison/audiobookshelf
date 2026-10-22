@@ -4,9 +4,9 @@
       <thead class="sticky top-0 z-10 bg-bg text-left text-gray-300">
         <tr>
           <th class="py-2" :style="{ width: coverSize + 8 + 'px', minWidth: coverSize + 8 + 'px' }"></th>
-          <th class="py-2 px-2 w-full">{{ $strings.LabelTitle }}</th>
-          <th class="py-2 px-2 hidden sm:table-cell w-[25%]">{{ $strings.LabelAuthor }}</th>
-          <th class="py-2 px-2 hidden md:table-cell w-[25%]">{{ $strings.LabelSeries }}</th>
+          <th class="py-2 px-2 w-full sm:w-[60%] md:w-[50%]">{{ $strings.LabelTitle }}</th>
+          <th class="py-2 px-2 hidden sm:table-cell sm:w-[40%] md:w-[25%] min-w-[120px]">{{ $strings.LabelAuthor }}</th>
+          <th class="py-2 px-2 hidden md:table-cell w-[25%] min-w-[100px]">{{ $strings.LabelSeries }}</th>
           <th class="py-2 px-2 hidden md:table-cell w-px whitespace-nowrap">{{ $strings.LabelFolder }}</th>
           <th class="py-2 px-2 hidden lg:table-cell text-left w-px whitespace-nowrap">{{ $strings.LabelPublishYear }}</th>
           <th class="py-2 px-2 hidden lg:table-cell text-left w-px whitespace-nowrap">{{ $strings.LabelDuration }}</th>
