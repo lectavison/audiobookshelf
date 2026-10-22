@@ -4,7 +4,7 @@
       <thead class="sticky top-0 z-10 bg-bg text-left text-gray-300">
         <tr>
           <th class="py-2" :style="{ width: coverSize + 8 + 'px', minWidth: coverSize + 8 + 'px' }"></th>
-          <th class="py-2 px-2 w-full sm:w-[40%]">{{ $strings.LabelTitle }}</th>
+          <th class="py-2 px-2 w-full">{{ $strings.LabelTitle }}</th>
           <th class="py-2 px-2 hidden sm:table-cell w-[25%]">{{ $strings.LabelAuthor }}</th>
           <th class="py-2 px-2 hidden md:table-cell w-[25%]">{{ $strings.LabelSeries }}</th>
           <th class="py-2 px-2 hidden md:table-cell w-px whitespace-nowrap">{{ $strings.LabelFolder }}</th>
