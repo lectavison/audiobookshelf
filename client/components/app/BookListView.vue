@@ -1,6 +1,6 @@
 <template>
-  <div id="bookshelf" ref="scroller" class="w-full overflow-y-auto px-2 md:px-8 pb-8" @scroll="onScroll">
-    <table class="w-full text-sm">
+  <div id="bookshelf" ref="scroller" class="w-full overflow-y-auto px-2 pb-8" @scroll="onScroll">
+    <table class="w-auto text-sm">
       <thead class="sticky top-0 z-10 bg-bg text-left text-gray-300">
         <tr>
           <th class="w-14 py-2"></th>
@@ -8,8 +8,8 @@
           <th class="py-2 px-2 hidden sm:table-cell">{{ $strings.LabelAuthor }}</th>
           <th class="py-2 px-2 hidden md:table-cell">{{ $strings.LabelSeries }}</th>
           <th class="py-2 px-2 hidden md:table-cell">{{ $strings.LabelFolder }}</th>
-          <th class="py-2 px-2 hidden lg:table-cell text-right">{{ $strings.LabelDuration }}</th>
-          <th class="py-2 px-2 hidden lg:table-cell text-right">{{ $strings.LabelAddedAt }}</th>
+          <th class="py-2 px-2 hidden lg:table-cell text-left">{{ $strings.LabelDuration }}</th>
+          <th class="py-2 px-2 hidden lg:table-cell text-left">{{ $strings.LabelAddedAt }}</th>
         </tr>
       </thead>
       <tbody>
@@ -18,14 +18,14 @@
             <img :src="coverSrc(item)" loading="lazy" class="w-10 h-10 object-cover rounded-xs bg-primary" />
           </td>
           <td class="py-1 px-2">
-            <p class="truncate max-w-[40vw] md:max-w-md">{{ title(item) }}</p>
+            <p class="truncate max-w-[40vw] md:max-w-xl">{{ title(item) }}</p>
             <p class="sm:hidden text-xs text-gray-400 truncate">{{ item.media.metadata.authorName }}</p>
           </td>
           <td class="py-1 px-2 hidden sm:table-cell truncate max-w-xs">{{ item.media.metadata.authorName }}</td>
-          <td class="py-1 px-2 hidden md:table-cell truncate max-w-xs">{{ item.media.metadata.seriesName }}</td>
+          <td class="py-1 px-2 hidden md:table-cell truncate max-w-xs">{{ item.media.metadata.seriesName === 'no series' ? '' : item.media.metadata.seriesName }}</td>
           <td class="py-1 px-2 hidden md:table-cell truncate max-w-xs text-gray-400" :title="item.path">{{ parentFolder(item) }}</td>
-          <td class="py-1 px-2 hidden lg:table-cell text-right whitespace-nowrap">{{ item.media.duration ? $elapsedPretty(item.media.duration) : '' }}</td>
-          <td class="py-1 px-2 hidden lg:table-cell text-right whitespace-nowrap">{{ item.addedAt ? $formatDate(item.addedAt, 'yyyy-MM-dd') : '' }}</td>
+          <td class="py-1 px-2 hidden lg:table-cell text-left whitespace-nowrap">{{ item.media.duration ? $elapsedPretty(item.media.duration) : '' }}</td>
+          <td class="py-1 px-2 hidden lg:table-cell text-left whitespace-nowrap">{{ item.addedAt ? $formatDate(item.addedAt, 'yyyy-MM-dd') : '' }}</td>
         </tr>
       </tbody>
     </table>
