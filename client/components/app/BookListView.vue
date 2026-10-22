@@ -3,19 +3,23 @@
     <table class="w-auto text-sm">
       <thead class="sticky top-0 z-10 bg-bg text-left text-gray-300">
         <tr>
-          <th class="w-14 py-2"></th>
+          <th class="py-2" :style="{ width: coverSize + 8 + 'px' }"></th>
           <th class="py-2 px-2">{{ $strings.LabelTitle }}</th>
           <th class="py-2 px-2 hidden sm:table-cell">{{ $strings.LabelAuthor }}</th>
           <th class="py-2 px-2 hidden md:table-cell">{{ $strings.LabelSeries }}</th>
           <th class="py-2 px-2 hidden md:table-cell">{{ $strings.LabelFolder }}</th>
+          <th class="py-2 px-2 hidden lg:table-cell text-left">{{ $strings.LabelPublishYear }}</th>
           <th class="py-2 px-2 hidden lg:table-cell text-left">{{ $strings.LabelDuration }}</th>
+          <th class="py-2 px-2 hidden lg:table-cell text-left">{{ $strings.LabelSize }}</th>
           <th class="py-2 px-2 hidden lg:table-cell text-left">{{ $strings.LabelAddedAt }}</th>
+          <th class="py-2 px-2 hidden xl:table-cell text-left">{{ $strings.LabelFileBirthtime }}</th>
+          <th class="py-2 px-2 hidden xl:table-cell text-left">{{ $strings.LabelFileModified }}</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="item in items" :key="item.id" class="border-t border-white/10 hover:bg-white/5 cursor-pointer" @click="open(item)">
           <td class="py-1">
-            <img :src="coverSrc(item)" loading="lazy" class="w-10 h-10 object-cover rounded-xs bg-primary" />
+            <img :src="coverSrc(item)" loading="lazy" class="object-cover rounded-xs bg-primary" :style="{ width: coverSize + 'px', height: coverSize + 'px' }" />
           </td>
           <td class="py-1 px-2">
             <p class="truncate max-w-[40vw] md:max-w-xl">{{ title(item) }}</p>
@@ -24,11 +28,20 @@
           <td class="py-1 px-2 hidden sm:table-cell truncate max-w-xs">{{ item.media.metadata.authorName }}</td>
           <td class="py-1 px-2 hidden md:table-cell truncate max-w-xs">{{ item.media.metadata.seriesName === 'no series' ? '' : item.media.metadata.seriesName }}</td>
           <td class="py-1 px-2 hidden md:table-cell truncate max-w-xs text-gray-400" :title="item.path">{{ parentFolder(item) }}</td>
+          <td class="py-1 px-2 hidden lg:table-cell text-left whitespace-nowrap">{{ item.media.metadata.publishedYear }}</td>
           <td class="py-1 px-2 hidden lg:table-cell text-left whitespace-nowrap">{{ item.media.duration ? $elapsedPretty(item.media.duration) : '' }}</td>
+          <td class="py-1 px-2 hidden lg:table-cell text-left whitespace-nowrap">{{ item.size ? $bytesPretty(item.size) : '' }}</td>
           <td class="py-1 px-2 hidden lg:table-cell text-left whitespace-nowrap">{{ item.addedAt ? $formatDate(item.addedAt, 'yyyy-MM-dd') : '' }}</td>
+          <td class="py-1 px-2 hidden xl:table-cell text-left whitespace-nowrap">{{ item.birthtimeMs ? $formatDate(item.birthtimeMs, 'yyyy-MM-dd') : '' }}</td>
+          <td class="py-1 px-2 hidden xl:table-cell text-left whitespace-nowrap">{{ item.mtimeMs ? $formatDate(item.mtimeMs, 'yyyy-MM-dd') : '' }}</td>
         </tr>
       </tbody>
     </table>
+    <div class="fixed right-4 bottom-4 z-50 flex items-center bg-primary border border-gray-600 rounded-full px-2 py-1 text-sm">
+      <button class="w-6 h-6" aria-label="Smaller" @click="changeCoverSize(-10)">-</button>
+      <span class="w-12 text-center">{{ coverSize }}</span>
+      <button class="w-6 h-6" aria-label="Larger" @click="changeCoverSize(10)">+</button>
+    </div>
     <p v-if="loading" class="text-center py-4 text-gray-300">{{ $strings.MessageLoading }}</p>
     <p v-else-if="initialized && !items.length" class="text-center py-12 text-xl">{{ $strings.MessageNoResults }}</p>
   </div>
@@ -53,6 +66,9 @@ export default {
     libraryId() {
       return this.$store.state.libraries.currentLibraryId
     },
+    coverSize() {
+      return this.settings.listCoverSize || 40
+    },
     settings() {
       return this.$store.state.user.settings
     },
@@ -70,6 +86,10 @@ export default {
       const root = (folder?.fullPath || '').split(/[\\/]/).filter(Boolean).pop()
       if (root) return root
       return (item.path || '').split(/[\\/]/).filter(Boolean).slice(0, 2).join('/')
+    },
+    changeCoverSize(delta) {
+      const size = Math.min(200, Math.max(24, this.coverSize + delta))
+      this.$store.dispatch('user/updateUserSettings', { listCoverSize: size })
     },
     coverSrc(item) {
       return this.$store.getters['globals/getLibraryItemCoverSrc'](item)
