@@ -60,7 +60,8 @@ export default {
       loading: false,
       initialized: false,
       requestId: 0,
-      lastQuery: ''
+      lastQuery: '',
+      windowWidth: 1024
     }
   },
   computed: {
@@ -71,7 +72,9 @@ export default {
       return Math.max(1, Math.floor(this.coverSize / 20))
     },
     coverSize() {
-      return this.settings.listCoverSize || 40
+      const size = this.settings.listCoverSize || 40
+      if (this.windowWidth < 640) return Math.max(24, Math.min(size, Math.round(this.windowWidth * 0.15)))
+      return size
     },
     settings() {
       return this.$store.state.user.settings
@@ -96,6 +99,9 @@ export default {
     },
     clamp(lines) {
       return { display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: lines, overflow: 'hidden' }
+    },
+    onResize() {
+      this.windowWidth = window.innerWidth
     },
     changeCoverSize(delta) {
       const size = Math.min(200, Math.max(24, this.coverSize + delta))
@@ -165,10 +171,13 @@ export default {
     }
   },
   mounted() {
+    this.windowWidth = window.innerWidth
+    window.addEventListener('resize', this.onResize)
     this.reset()
     this.$eventBus.$on('user-settings', this.settingsUpdated)
   },
   beforeDestroy() {
+    window.removeEventListener('resize', this.onResize)
     this.$eventBus.$off('user-settings', this.settingsUpdated)
   }
 }
