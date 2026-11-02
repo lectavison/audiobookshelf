@@ -36,6 +36,11 @@ jobs:
           ref: master
           path: client-react
 
+      - name: Make React build writable for UID 1000
+        run: |
+          sed -i 's|^COPY --from=build-client /client-react/.next /app/client-react/.next$|COPY --from=build-client --chown=1000:1000 /client-react/.next /app/client-react/.next|' client-react/Dockerfile
+          grep -Fx 'COPY --from=build-client --chown=1000:1000 /client-react/.next /app/client-react/.next' client-react/Dockerfile
+
       - name: Server sha
         id: server-sha
         run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
