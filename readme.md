@@ -77,6 +77,15 @@ See [library docs](https://audiobookshelf.org/docs/category/libraries) for suppo
 
 See [install docs](https://audiobookshelf.org/docs/category/installation)
 
+### Fork list view
+
+The library list view supports the same selection and editing actions as the
+bookshelf grid. Select a row's checkbox to use the existing batch-action toolbar;
+click additional rows or Shift-click to select a range of loaded books. Use the
+toolbar's close action or Escape to deselect. Users with update permission can
+open the existing editor from a row's edit button when no books are selected.
+Collapsed series remain navigation links rather than selectable or editable books.
+
 <br />
 
 # Reverse Proxy Set Up

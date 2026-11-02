@@ -1,8 +1,9 @@
 <template>
-  <div id="bookshelf" ref="scroller" class="w-full overflow-y-auto px-2 pb-8" @scroll="onScroll">
+  <div id="bookshelf" ref="scroller" class="w-full overflow-y-auto px-2 pb-8" @scroll="onScroll" @keydown.esc="clearSelection">
     <table class="w-full text-sm">
       <thead class="sticky top-0 z-10 bg-bg text-left text-gray-300">
         <tr>
+          <th class="w-8"></th>
           <th class="py-2" :style="{ width: coverSize + 8 + 'px', minWidth: coverSize + 8 + 'px' }"></th>
           <th class="py-2 px-2 w-full sm:w-[60%] md:w-[50%]">{{ $strings.LabelTitle }}</th>
           <th class="py-2 px-2 hidden sm:table-cell sm:w-[40%] md:w-[25%] min-w-[120px]">{{ $strings.LabelAuthor }}</th>
@@ -14,10 +15,14 @@
           <th class="py-2 px-2 hidden lg:table-cell text-left w-px whitespace-nowrap">{{ $strings.LabelAddedAt }}</th>
           <th class="py-2 px-2 hidden xl:table-cell text-left w-px whitespace-nowrap">{{ $strings.LabelFileBirthtime }}</th>
           <th class="py-2 px-2 hidden xl:table-cell text-left w-px whitespace-nowrap">{{ $strings.LabelFileModified }}</th>
+          <th v-if="userCanUpdate && !isSelectionMode" class="w-8"></th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in items" :key="item.id" class="border-t border-white/10 hover:bg-white/5 cursor-pointer" @click="open(item)">
+        <tr v-for="item in items" :key="item.id" cy-id="bookRow" class="border-t border-white/10 hover:bg-white/5 cursor-pointer" :class="{ 'bg-yellow-400/10': isSelected(item) }" :aria-selected="isSelected(item)" @click="open(item, $event)">
+          <td class="py-1 px-2">
+            <input v-if="!item.collapsedSeries" cy-id="selectItem" type="checkbox" :aria-label="item.media.metadata.title" :checked="isSelected(item)" :disabled="processingBatch" class="cursor-pointer" @click.stop="selectItem(item, $event.shiftKey)" />
+          </td>
           <td class="py-1" :style="{ minWidth: coverSize + 8 + 'px' }">
             <img :src="coverSrc(item)" loading="lazy" class="object-cover rounded-xs bg-primary max-w-none block" :style="{ width: coverSize + 'px', height: coverSize + 'px' }" />
           </td>
@@ -33,6 +38,11 @@
           <td class="py-1 px-2 hidden lg:table-cell text-left whitespace-nowrap">{{ item.addedAt ? $formatDate(item.addedAt, 'yyyy-MM-dd') : '' }}</td>
           <td class="py-1 px-2 hidden xl:table-cell text-left whitespace-nowrap">{{ item.birthtimeMs ? $formatDate(item.birthtimeMs, 'yyyy-MM-dd') : '' }}</td>
           <td class="py-1 px-2 hidden xl:table-cell text-left whitespace-nowrap">{{ item.mtimeMs ? $formatDate(item.mtimeMs, 'yyyy-MM-dd') : '' }}</td>
+          <td v-if="userCanUpdate && !isSelectionMode" class="py-1 px-2">
+            <button v-if="!item.collapsedSeries" cy-id="editItem" :aria-label="$strings.LabelEdit" :title="$strings.LabelEdit" :disabled="processingBatch" class="w-7 h-7 flex items-center justify-center hover:text-yellow-300" @click.stop="editItem(item)">
+              <span class="material-symbols" aria-hidden="true">edit</span>
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -59,10 +69,28 @@ export default {
       initialized: false,
       requestId: 0,
       lastQuery: '',
-      windowWidth: 1024
+      windowWidth: 1024,
+      lastSelectedId: null
+    }
+  },
+  watch: {
+    isSelectionMode(value) {
+      if (!value) this.lastSelectedId = null
     }
   },
   computed: {
+    userCanUpdate() {
+      return this.$store.getters['user/getUserCanUpdate']
+    },
+    processingBatch() {
+      return this.$store.state.processingBatch
+    },
+    selectedMediaItems() {
+      return this.$store.state.globals.selectedMediaItems
+    },
+    isSelectionMode() {
+      return !!this.selectedMediaItems.length
+    },
     libraryId() {
       return this.$store.state.libraries.currentLibraryId
     },
@@ -108,8 +136,46 @@ export default {
     coverSrc(item) {
       return this.$store.getters['globals/getLibraryItemCoverSrc'](item)
     },
-    open(item) {
-      this.$router.push(`/item/${item.id}`)
+    isSelected(item) {
+      return this.selectedMediaItems.some((selected) => selected.id === item.id)
+    },
+    clearSelection(event) {
+      if (!this.isSelectionMode || this.processingBatch) return
+      this.$store.commit('globals/resetSelectedMediaItems', [])
+      this.$eventBus.$emit('bookshelf_clear_selection')
+      event.preventDefault()
+      event.stopPropagation()
+    },
+    selectItem(item, shiftKey = false) {
+      if (this.processingBatch || item.collapsedSeries) return
+      const index = this.items.findIndex((entry) => entry.id === item.id)
+      const anchor = this.items.findIndex((entry) => entry.id === this.lastSelectedId)
+      const range = shiftKey && anchor >= 0 ? this.items.slice(Math.min(index, anchor), Math.max(index, anchor) + 1).filter((entry) => !entry.collapsedSeries) : [item]
+      const selected = range.some((entry) => !this.isSelected(entry))
+      range.forEach((entry) => {
+        const mediaItem = {
+          id: entry.id,
+          mediaType: entry.mediaType,
+          hasTracks: !!(entry.mediaType === 'podcast' || entry.media.audioFile || entry.media.numTracks || entry.media.tracks?.length)
+        }
+        this.$store.commit('globals/setMediaItemSelected', { item: mediaItem, selected })
+      })
+      this.lastSelectedId = selected ? item.id : null
+    },
+    editItem(item) {
+      if (!this.userCanUpdate || this.processingBatch || this.isSelectionMode || item.collapsedSeries) return
+      this.$store.commit('setBookshelfBookIds', this.items.filter((entry) => !entry.collapsedSeries).map((entry) => entry.id))
+      this.$store.commit('showEditModalOnTab', { libraryItem: item, tab: 'details' })
+    },
+    open(item, event) {
+      if (this.processingBatch) return
+      if (this.isSelectionMode) {
+        this.selectItem(item, event.shiftKey)
+      } else if (item.collapsedSeries) {
+        this.$router.push(`/library/${this.libraryId}/series/${item.collapsedSeries.id}`)
+      } else {
+        this.$router.push(`/item/${item.id}`)
+      }
     },
     buildQuery() {
       const params = new URLSearchParams()
@@ -124,6 +190,9 @@ export default {
       return params
     },
     async reset() {
+      this.requestId++
+      this.loading = false
+      this.lastSelectedId = null
       this.items = []
       this.total = 0
       this.page = 0
@@ -163,8 +232,17 @@ export default {
     },
     settingsUpdated() {
       if (this.buildQuery().toString() === this.lastQuery) return
-      this.requestId++
-      this.loading = false
+      this.reset()
+    },
+    libraryItemsUpdated(items) {
+      if (items.some((item) => item.libraryId === this.libraryId)) this.reset()
+    },
+    libraryItemUpdated(item) {
+      this.libraryItemsUpdated([item])
+    },
+    libraryItemRemoved(item) {
+      if (item.libraryId !== this.libraryId) return
+      this.$store.commit('globals/setMediaItemSelected', { item, selected: false })
       this.reset()
     }
   },
@@ -173,10 +251,21 @@ export default {
     window.addEventListener('resize', this.onResize)
     this.reset()
     this.$eventBus.$on('user-settings', this.settingsUpdated)
+    if (this.$root.socket) {
+      this.$root.socket.on('item_updated', this.libraryItemUpdated)
+      this.$root.socket.on('items_updated', this.libraryItemsUpdated)
+      this.$root.socket.on('item_removed', this.libraryItemRemoved)
+    }
   },
   beforeDestroy() {
+    this.requestId++
     window.removeEventListener('resize', this.onResize)
     this.$eventBus.$off('user-settings', this.settingsUpdated)
+    if (this.$root.socket) {
+      this.$root.socket.off('item_updated', this.libraryItemUpdated)
+      this.$root.socket.off('items_updated', this.libraryItemsUpdated)
+      this.$root.socket.off('item_removed', this.libraryItemRemoved)
+    }
   }
 }
 </script>
